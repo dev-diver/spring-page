@@ -16,13 +16,6 @@ public class ArticleService {
     @Autowired
     private ArticleRepository repository;
 
-    public String testService(){
-        ArticleEntity entity = ArticleEntity.builder().title("첫번째 제목").build();
-        repository.save(entity);
-        ArticleEntity savedEntity = repository.findById(entity.getId()).get();
-        return savedEntity.getTitle();
-    }
-
     public List<ArticleEntity> create(final ArticleEntity entity){
         validate(entity);
         repository.save(entity);
