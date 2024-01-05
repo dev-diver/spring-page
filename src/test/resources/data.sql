@@ -1,0 +1,1 @@
+INSERT INTO ARTICLE(ID, USER_ID, TITLE, TEXT) VALUES (99, 'user-id', '제목', '내용');

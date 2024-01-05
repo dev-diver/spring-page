@@ -1,6 +1,6 @@
 package com.gang.mypage.dto;
 
-import com.gang.mypage.model.ArticleEntity;
+import com.gang.mypage.model.Article;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,21 +11,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class ArticleDTO {
-    private String id;
+    private Long id;
     private String title;
     private String text;
+    private String userId;
 
-    public ArticleDTO(final ArticleEntity entity){
-        this.id = entity.getId();
-        this.title = entity.getTitle();
-        this.text = entity.getText();
+    public ArticleDTO(final Article entity){
+        this.id = entity.id();
+        this.title = entity.title();
+        this.text = entity.text();
     }
 
-    public static ArticleEntity toEntity(final ArticleDTO dto){
-        return ArticleEntity.builder()
+    public static Article toEntity(final ArticleDTO dto){
+        return Article.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
                 .text(dto.getText())
+                .userId(dto.getUserId())
                 .build();
     }
 

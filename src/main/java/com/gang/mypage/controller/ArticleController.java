@@ -1,50 +1,57 @@
 package com.gang.mypage.controller;
 
 import com.gang.mypage.dto.ArticleDTO;
-import com.gang.mypage.dto.ResponseDTO;
-import com.gang.mypage.model.ArticleEntity;
+import com.gang.mypage.model.Article;
+import com.gang.mypage.repository.ArticleRepository;
 import com.gang.mypage.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.net.URI;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("api/board")
+@RequestMapping("api/article")
 public class ArticleController {
 
     @Autowired
     private ArticleService service;
 
-    @GetMapping
-    public String ArticleController(){
-        return "Hello World!";
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    private ArticleController(ArticleRepository articleRepository){
+        this.articleRepository = articleRepository;
     }
 
-    @GetMapping("/{id}")
-    public String articleControllerWithId(@PathVariable(required= false) Long id){
-        return "Hello World!" + id;
+    @GetMapping
+    public ResponseEntity<String> ArticleController(){
+        return ResponseEntity.ok("{'data':'hello'}");
     }
 
     @PostMapping
-    public ResponseEntity<?> createArticle(@RequestBody ArticleDTO dto){
-        try{
-            String temporaryUserId = "temporary-user";
+    public ResponseEntity<?> createArticle(@RequestBody ArticleDTO dto, UriComponentsBuilder ucb){
+        Article entity = ArticleDTO.toEntity(dto);
+        System.out.println(entity.toString());
+        Article savedArticle = articleRepository.save(entity);
+        URI locationOfNewArticle = ucb
+                .path("/api/article/{id}")
+                .buildAndExpand(savedArticle.id())
+                .toUri();
 
-            ArticleEntity entity = ArticleDTO.toEntity(dto);
-            entity.setId(null);
-            entity.setUserId(temporaryUserId);
-            List<ArticleEntity> entities = service.create(entity);
-            List<ArticleDTO> dtos = entities.stream().map(ArticleDTO::new).collect(Collectors.toList());
-
-            ResponseDTO<ArticleDTO> response = ResponseDTO.<ArticleDTO>builder().data(dtos).build();
-            return ResponseEntity.ok().body(response);
-        }catch(Exception e){
-            String error = e.getMessage();
-            ResponseDTO<ArticleDTO> response = ResponseDTO.<ArticleDTO>builder().error(error).build();
-            return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.created(locationOfNewArticle).build();
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Article> articleFindById(@PathVariable(required = false) Long id){
+        Optional<Article> articleOptional = articleRepository.findById(id);
+        if (articleOptional.isPresent()) {
+            return ResponseEntity.ok(articleOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
+
+
 }
