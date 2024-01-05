@@ -1,0 +1,20 @@
+[
+  {
+    "id": 99,
+    "userId": "user-id",
+    "title": "제목1",
+    "text" : "내용"
+  },
+  {
+    "id": 98,
+    "userId": "user-id",
+    "title": "제목2",
+    "text" : "내용"
+  },
+  {
+    "id": 97,
+    "userId": "user-id",
+    "title": "제목3",
+    "text" : "내용"
+  }
+]

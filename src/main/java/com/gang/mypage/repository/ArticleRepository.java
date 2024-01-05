@@ -2,7 +2,8 @@ package com.gang.mypage.repository;
 
 import com.gang.mypage.model.Article;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface ArticleRepository extends CrudRepository<Article, Long> {
+
+public interface ArticleRepository extends CrudRepository<Article, Long> , PagingAndSortingRepository<Article, Long>{
 }
