@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,14 +57,31 @@ public class ArticleController {
 
         return ResponseEntity.created(locationOfNewArticle).build();
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<Article> articleFindById(@PathVariable(required = false) Long id){
-        Optional<Article> articleOptional = articleRepository.findById(id);
+
+
+    //    private Article findArticle(Long requestedId, Principal principal) {
+//        return articleRepository.findByIdAndOwner(requestedId, principal.getName());
+//    } //refactoring
+    @GetMapping("/{requestedId}")
+    public ResponseEntity<Article> articleFindById(@PathVariable Long requestedId){
+        Optional<Article> articleOptional = articleRepository.findById(requestedId);
         if (articleOptional.isPresent()) {
             return ResponseEntity.ok(articleOptional.get());
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/{requestedId}")
+    private ResponseEntity<Void> putArticle(@PathVariable Long requestedId, @RequestBody Article articleUpdate) { //Principal principal
+        Optional<Article> optionalArticle = articleRepository.findById(requestedId); //principal
+        if(optionalArticle.isPresent()){
+            Article article = optionalArticle.get();
+            Article updatedArticle = new Article(article.id(), articleUpdate.userId() , articleUpdate.title(), articleUpdate.text());
+            articleRepository.save(updatedArticle);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 
 

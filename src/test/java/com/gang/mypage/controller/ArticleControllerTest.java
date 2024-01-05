@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -113,5 +115,47 @@ class ArticleControllerTest {
         JSONArray title = documentContext.read("$..title");
         assertThat(title).containsExactly("제목1", "제목2", "제목3");
     }
+
+    @Test
+    @DirtiesContext
+    void shouldUpdateAnExistingArticle() {
+        Article articleUpdate = new Article(null, "user-id2", "제목4","냉무");
+        HttpEntity<Article> request = new HttpEntity<>(articleUpdate);
+        ResponseEntity<Void> response = restTemplate
+                //.withBasicAuth("sarah1", "abc123")
+                .exchange("/api/article/99", HttpMethod.PUT, request, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        ResponseEntity<String> getResponse = restTemplate
+                //.withBasicAuth("sarah1", "abc123")
+                .getForEntity("/api/article/99", String.class);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        DocumentContext documentContext = JsonPath.parse(getResponse.getBody());
+        Number id = documentContext.read("$.id");
+        String title = documentContext.read("$.title");
+        assertThat(id).isEqualTo(99);
+        assertThat(title).isEqualTo("제목4");
+    }
+
+    @Test
+    void shouldNotUpdateArticleThatDoesNotExist() {
+        Article unknownArticle = new Article(null, "user-id", "제목123", "냉무");
+        HttpEntity<Article> request = new HttpEntity<>(unknownArticle);
+        ResponseEntity<Void> response = restTemplate
+                //.withBasicAuth("sarah1", "abc123")
+                .exchange("/api/article/99999", HttpMethod.PUT, request, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+//    @Test
+//    void shouldNotUpdateACashCardThatIsOwnedBySomeoneElse() {
+//        Article kumarsArticle = new Article(null, "user-id3", "제목이당", "냉무무");
+//        HttpEntity<Article> request = new HttpEntity<>(kumarsArticle);
+//        ResponseEntity<Void> response = restTemplate
+//                .withBasicAuth("sarah1", "abc123")
+//                .exchange("/api/article/102", HttpMethod.PUT, request, Void.class);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//    }
+
 
 }
