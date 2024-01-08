@@ -40,7 +40,7 @@ public class ArticleController {
                         pageable.getPageNumber(),
                         pageable.getPageSize(),
 //                        pageable.getSort(), //sort기준은 argument로 넘어온다.
-                        pageable.getSortOr(Sort.by(Sort.Direction.ASC, "title"))
+                        pageable.getSortOr(Sort.by(Sort.Direction.DESC, "id"))
                 ));
         return ResponseEntity.ok(page.getContent());
     }
@@ -79,6 +79,16 @@ public class ArticleController {
             Article article = optionalArticle.get();
             Article updatedArticle = new Article(article.id(), articleUpdate.userId() , articleUpdate.title(), articleUpdate.text());
             articleRepository.save(updatedArticle);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<Void> deleteArticle(@PathVariable Long id) { //Principal
+        //findById 써도 되는데 쓸데없는 정보가 있을 수 있음
+        if (articleRepository.existsById(id)){//AndOwner(id, principal.getName())) {
+            articleRepository.deleteById(id); // Add this line
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

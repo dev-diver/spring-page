@@ -6,4 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 
 public interface ArticleRepository extends CrudRepository<Article, Long> , PagingAndSortingRepository<Article, Long>{
+    boolean existsById(Long id);
 }
