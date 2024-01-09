@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.UUID;
 
@@ -15,5 +16,6 @@ public class UserDTO {
     private String token;
     private Long id;
     private String userId;
+    private String role;
     private String password;
 }

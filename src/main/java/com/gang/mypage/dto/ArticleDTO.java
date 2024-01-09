@@ -14,7 +14,7 @@ public class ArticleDTO {
     private Long id;
     private String title;
     private String text;
-    private String userId;
+    private Long userId;
 
     public ArticleDTO(final Article entity){
         this.id = entity.id();

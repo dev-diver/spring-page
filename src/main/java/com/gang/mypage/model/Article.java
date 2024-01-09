@@ -6,7 +6,7 @@ import org.springframework.data.annotation.Id;
 @Builder
 public record Article(
         @Id Long id,
-        String userId,
+        Long userId,
         String title,
         String text
 ) {

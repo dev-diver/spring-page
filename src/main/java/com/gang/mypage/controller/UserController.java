@@ -3,24 +3,25 @@ package com.gang.mypage.controller;
 import com.gang.mypage.dto.ResponseDTO;
 import com.gang.mypage.dto.UserDTO;
 import com.gang.mypage.model.UserAccount;
+import com.gang.mypage.security.TokenProvider;
 import com.gang.mypage.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody UserDTO userDTO) {
@@ -29,20 +30,20 @@ public class UserController {
                 throw new RuntimeException("유효하지 않은 비밀번호");
             }
 
-            System.out.printf("userDTO %s\n", userDTO.toString());
+            log.debug("userDTO {}\n", userDTO);
 
             // 리퀘스트를 이용해 저장할 유저 만들기
             UserAccount user = UserAccount.builder()
                     .userId(userDTO.getUserId())
                     .password(userDTO.getPassword())
-                    .authProvider("a")
-                    .role("b")
+                    //.authProvider("a")
+                    //.role("b")
                     .build();
             // 서비스를 이용해 리파지토리에 유저 저장
-            System.out.printf("user 생성 시작 %s\n", user.toString());
+            log.debug("user 생성 시작 {}\n", user.toString());
 
             UserAccount registeredUser = userService.create(user);
-            System.out.printf("user 생성 완료\n");
+            log.debug("user 생성 완료\n");
             UserDTO responseUserDTO = UserDTO.builder()
                     .id(registeredUser.id())
                     .userId(registeredUser.userId())
@@ -68,10 +69,15 @@ public class UserController {
 
         if(user != null) {
             // 토큰 생성
+            final String token = tokenProvider.create(user);
+
+            //user 생성
             final UserDTO responseUserDTO = UserDTO.builder()
                     .userId(user.userId())
                     .id(user.id())
+                    .token(token)
                     .build();
+
             return ResponseEntity.ok().body(responseUserDTO);
         } else {
             ResponseDTO responseDTO = ResponseDTO.builder()
