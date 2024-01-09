@@ -4,5 +4,10 @@ import lombok.Builder;
 import org.springframework.data.annotation.Id;
 
 @Builder
-public record Article(@Id Long id, String userId, String title, String text) {
+public record Article(
+        @Id Long id,
+        String userId,
+        String title,
+        String text
+) {
 }

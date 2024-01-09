@@ -48,7 +48,6 @@ public class ArticleController {
     @PostMapping
     public ResponseEntity<?> createArticle(@RequestBody ArticleDTO dto, UriComponentsBuilder ucb){
         Article entity = ArticleDTO.toEntity(dto);
-        System.out.println(entity.toString());
         Article savedArticle = articleRepository.save(entity);
         URI locationOfNewArticle = ucb
                 .path("/api/article/{id}")

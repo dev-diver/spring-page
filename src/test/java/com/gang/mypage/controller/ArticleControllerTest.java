@@ -112,8 +112,8 @@ class ArticleControllerTest {
         JSONArray page = documentContext.read("$[*]");
         assertThat(page.size()).isEqualTo(3);
 
-        JSONArray title = documentContext.read("$..title");
-        assertThat(title).containsExactly("제목1", "제목2", "제목3");
+        JSONArray title = documentContext.read("$..id");
+        assertThat(title).containsExactly(99, 98, 97);
     }
 
     @Test
