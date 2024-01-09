@@ -16,7 +16,8 @@ import java.util.Date;
 @Slf4j
 @Service
 public class TokenProvider {
-    private static final String SECRET_KEY = "a94f245878e13618ddbd27cafad0f4647ddb2e53239952bc6301d662fa565aedf4c584d295d8441cc3862f0916bb5c796c7134359ce636a490dd3693990d4e66";
+    private static final String SECRET_KEY = System.getenv("SECRET_KEY");
+
     private final SecretKey key;
 
     public TokenProvider() {
