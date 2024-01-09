@@ -46,8 +46,10 @@ public class UserController {
             log.debug("user 생성 시작 {}\n", user.toString());
 
             UserAccount registeredUser = userService.create(user);
+            final String token = tokenProvider.create(registeredUser);
             log.debug("user 생성 완료\n");
             UserDTO responseUserDTO = UserDTO.builder()
+                    .token(token)
                     .id(registeredUser.id())
                     .userId(registeredUser.userId())
                     .build();
