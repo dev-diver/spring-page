@@ -87,7 +87,7 @@ public class UserController {
             return ResponseEntity.ok().body(responseUserDTO);
         } else {
             ResponseDTO responseDTO = ResponseDTO.builder()
-                    .error("Login 실패.")
+                    .error("일치하는 정보를 찾을 수 없습니다.")
                     .build();
             return ResponseEntity
                     .badRequest()
